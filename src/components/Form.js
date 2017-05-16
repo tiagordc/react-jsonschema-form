@@ -166,7 +166,7 @@ export default class Form extends Component {
     const _SchemaField = registry.fields.SchemaField;
 
     return (
-      <form
+      <fieldset
         className={className ? className : "rjsf"}
         id={id}
         name={name}
@@ -195,7 +195,7 @@ export default class Form extends Component {
           : <p>
               <button type="submit" className="btn btn-info">Submit</button>
             </p>}
-      </form>
+      </fieldset>
     );
   }
 }
