@@ -1,5 +1,6 @@
 # sp-react-form
-=====================
+
+A React component to bring JSON Schema Web Forms to SharePoint
 
 [![Build Status](https://travis-ci.org/tiagordc/sp-react-form.svg?branch=master)](https://travis-ci.org/tiagordc/sp-react-form)
 
@@ -28,6 +29,6 @@ module.exports = {
 }
 ```
 
-# instructions
+## instructions
 
 npm start
