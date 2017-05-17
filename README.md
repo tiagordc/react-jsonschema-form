@@ -3,9 +3,9 @@ sp-react-form
 
 [![Build Status](https://travis-ci.org/tiagordc/sp-react-form.svg?branch=master)](https://travis-ci.org/tiagordc/sp-react-form)
 
-# auth.js
+## auth.js
 
-```json
+```javascript
 module.exports = {
     options: {
         siteUrl: '[SITE URL]',
