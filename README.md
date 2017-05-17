@@ -32,3 +32,10 @@ module.exports = {
 ## instructions
 
 npm start
+
+```javascript
+var schema = { "type": "object", "required": [ "Title" ], "properties": { "Title": { "type": "string", "title": "Title" } } };
+var itemId = null;
+window.ReactForm.load("divForm", schema, "List Name", itemId);
+window.ReactForm.destroy();
+```

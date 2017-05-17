@@ -1,6 +1,6 @@
 import { createElement } from 'react';
 import { render } from 'react-dom';
-import { getUIfromSchema, getJSfromSP } from '../utils';
+import { getUIfromSchema, getJSfromSP, getSPfromJS } from '../utils';
 
 import Form from "./Form";
 import PnP from "sp-pnp-js";
@@ -20,10 +20,11 @@ export default class ListForm {
     
     let promises = [getUIfromSchema(schema, { "people": PeoplePickerWidget })];
     
-    if (typeof list === "string" && typeof item === "number") {
-        let p1 = PnP.sp.web.lists.getByTitle(list).items.getById(item).get();
-        let p2 = PnP.sp.web.lists.getByTitle(list).fields.get();
-        promises.push(p1, p2);
+    if (typeof list === "string") {
+        promises.push(PnP.sp.web.lists.getByTitle(list).fields.get());
+        if (typeof item === "number") {
+            promises.push(PnP.sp.web.lists.getByTitle(list).items.getById(item).get());
+        }
     }
 
     Promise.all(promises).then(function(data) {
@@ -32,15 +33,26 @@ export default class ListForm {
 
         let formProps = { 
             schema: schema, 
-            uiSchema: uiSchema,
-            onChange: that.onChange ? that.onChange : null,
-            onError: that.onError ? that.onError : null,
-            onSubmit: that.onSave ? that.onSave : null
+            uiSchema: uiSchema
         };
 
-        // if (data.length > 1) {
-        //     var jsObject = getJSfromSP(data[1], data[2]);
-        // }
+        if (data.length > 1) {
+
+            that.listFields = data[1];
+
+            if (data.length > 2) {
+                that.listItem = data[2];
+                formProps.formData = getJSfromSP(that.listItem, that.listFields);
+            }
+
+            formProps.onSubmit = (data) => {
+                const item = getSPfromJS(data.formData, that.listFields);
+                const items = PnP.sp.web.lists.getByTitle(that.listName).items;
+                if (that.listItem) items.getById(that.itemId).update(item).then(i => { console.log(i); });             
+                else items.add(item).then(i => { console.log(i); });
+            };
+
+        }
 
         render(createElement(Form, formProps, null), that.elem);
 
@@ -48,16 +60,20 @@ export default class ListForm {
 
   }
 
-  save(list, item) {
-
-  }
-
   destroy() {
+
     if (this.elem) {
       while (this.elem.firstChild) {
           this.elem.removeChild(this.elem.firstChild);
       }
     }
+
+    this.elem = null
+    this.listName = null;
+    this.itemId = null;
+    this.listItem = null;
+    this.listFields = null;
+
   }
 
 }

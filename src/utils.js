@@ -1,5 +1,6 @@
 import React from "react";
 import "setimmediate";
+import {FieldTypes} from "sp-pnp-js";
 
 const widgetMap = {
   boolean: {
@@ -604,37 +605,68 @@ export function getUIfromSchema(schema, map) {
 export function getJSfromSP(item, fields) {
 
     let result = {};
-    let mapping = getValidSPFields(fields, [1,2,3,4,6,7,8,9,10,11,15,16,20]);
+    let mapping = getValidSPFields(fields, [FieldTypes.Integer, FieldTypes.Text, FieldTypes.Note, FieldTypes.DateTime, FieldTypes.Choice, FieldTypes.Lookup, FieldTypes.Boolean, FieldTypes.Number, FieldTypes.Currency, FieldTypes.URL, FieldTypes.MultiChoice, FieldTypes.User]);
 
     if (mapping) {
-        for (let i = 0; i < mapping.length; i++) {
-            
-            const field = fields[mapping[i].index];
-            const value = item[field.InternalName];
-
-            if (value == null) {
-                result[field.InternalName] = null;
-            } else {
-                //https://msdn.microsoft.com/en-us/library/microsoft.sharepoint.client.fieldtype.aspx
-                switch (field.FieldTypeKind) {
-                    case 1: //Integer
-                        result[field.InternalName] = parseInt(value.toString());
-                        break;
-                    case 2, 3: //Text
-                        result[field.InternalName] = value.toString();
-                        break;
-                }
-            }
-            
-
+      for (let i = 0; i < mapping.length; i++) {
+        
+        const field = fields[mapping[i].index];
+        let value = item[field.InternalName];
+        result[field.InternalName] = null;
+        
+        //https://msdn.microsoft.com/en-us/library/microsoft.sharepoint.client.fieldtype.aspx
+        switch (field.FieldTypeKind) {
+          case FieldTypes.Integer:
+            if (value) result[field.InternalName] = parseInt(value.toString());
+              break;
+          case FieldTypes.Text:
+          case FieldTypes.Note:
+              if (value) result[field.InternalName] = value.toString();
+              break;
+          case FieldTypes.Lookup:
+          case FieldTypes.User:
+              value = item[field.InternalName + "Id"];
+              if (value) result[field.InternalName] = parseInt(value.toString()); 
+              break;
         }
+          
+      }
     }
 
     return result;
 
 }
 
-export function getSPfromJS() {
+export function getSPfromJS(item, fields) {
+  
+  let result = {};
+  let mapping = getValidSPFields(fields, [FieldTypes.Integer, FieldTypes.Text, FieldTypes.Note, FieldTypes.DateTime, FieldTypes.Choice, FieldTypes.Lookup, FieldTypes.Boolean, FieldTypes.Number, FieldTypes.Currency, FieldTypes.URL, FieldTypes.MultiChoice, FieldTypes.User]);
+
+  if (mapping) {
+    for (let i = 0; i < mapping.length; i++) {
+      
+      const field = fields[mapping[i].index];
+      let value = item[field.InternalName];
+
+      if (value) {
+        switch (field.FieldTypeKind) {
+          case FieldTypes.Integer:
+          case FieldTypes.Text:
+          case FieldTypes.Note:
+              result[field.InternalName] = value;
+              break;
+          case FieldTypes.Lookup:
+          case FieldTypes.User:
+              var id = parseInt(value.toString());
+              if (id > 0) result[field.InternalName + "Id"] = value; 
+              break;
+        }
+      }
+
+    }
+  }
+
+  return result;
 
 }
 

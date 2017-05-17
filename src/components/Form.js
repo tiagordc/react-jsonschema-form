@@ -176,8 +176,7 @@ export default class Form extends Component {
         autoComplete={autocomplete}
         encType={enctype}
         acceptCharset={acceptcharset}
-        noValidate={noHtml5Validate}
-        onSubmit={this.onSubmit}>
+        noValidate={noHtml5Validate}>
         {this.renderErrors()}
         <_SchemaField
           schema={schema}
@@ -193,7 +192,7 @@ export default class Form extends Component {
         {children
           ? children
           : <p>
-              <button type="submit" className="btn btn-info">Submit</button>
+              <button className="btn btn-info" onClick={this.onSubmit}>Save</button>
             </p>}
       </fieldset>
     );
