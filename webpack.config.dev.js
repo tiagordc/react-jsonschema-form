@@ -1,6 +1,5 @@
 var path = require("path");
 var webpack = require("webpack");
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
   entry: "./src/index",
@@ -10,7 +9,6 @@ module.exports = {
     publicPath: "/static/"
   },
   plugins: [
-    new ExtractTextPlugin("styles.css", {allChunks: true}),
     new webpack.DefinePlugin({
       "process.env": {
         NODE_ENV: JSON.stringify("development")
@@ -18,7 +16,7 @@ module.exports = {
     })
   ],
   resolve: {
-    extensions: ["", ".js", ".jsx", ".css"]
+    extensions: ["", ".js", ".jsx"]
   },
   module: {
     loaders: [
@@ -31,17 +29,7 @@ module.exports = {
         },
         include: [
           path.join(__dirname, "src"),
-          path.join(__dirname, "playground"),
           path.join(__dirname, "node_modules", "codemirror", "mode", "javascript"),
-        ],
-      },
-      {
-        test: /\.css$/,
-        loader: ExtractTextPlugin.extract("css-loader"),
-        include: [
-          path.join(__dirname, "css"),
-          path.join(__dirname, "playground"),
-          path.join(__dirname, "node_modules"),
         ],
       }
     ]

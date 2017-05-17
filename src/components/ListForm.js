@@ -61,6 +61,3 @@ export default class ListForm {
   }
 
 }
-
-//TODO: remove this
-window.ListForm = new ListForm();

@@ -559,42 +559,42 @@ export function getUIfromSchema(schema, map) {
 
         let result = {};
         
-        // const loopRecursive = function (element, name, parents) {
+        const loopRecursive = function (element, name, parents) {
 
-        //     if (!element) reject();
+            if (!element) reject();
 
-        //     for (let prop in map) {
-        //         if (typeof element.type === "string" && element.type === prop) {
+            for (let prop in map) {
+                if (typeof element.type === "string" && element.type === prop) {
 
-        //             let currentNode = result;
-        //             for (let i = 1; i < parents.length; i++) {
-        //                 if (parents[i] === "properties") continue;
-        //                 if (typeof currentNode[parents[i]] !== "object") currentNode[parents[i]] = {};
-        //                 currentNode = currentNode[parents[i]];
-        //             }
-        //             currentNode[name] = {"ui:widget": map[prop] };
-        //             element.type = "string";
+                    let currentNode = result;
+                    for (let i = 1; i < parents.length; i++) {
+                        if (parents[i] === "properties") continue;
+                        if (typeof currentNode[parents[i]] !== "object") currentNode[parents[i]] = {};
+                        currentNode = currentNode[parents[i]];
+                    }
+                    currentNode[name] = {"ui:widget": map[prop] };
+                    element.type = "string";
 
-        //             if (typeof element.ui !== "undefined") {
-        //                 currentNode[name]["ui:options"] = element.ui;
-        //                 delete element.ui;
-        //             }
+                    if (typeof element.ui !== "undefined") {
+                        currentNode[name]["ui:options"] = element.ui;
+                        delete element.ui;
+                    }
 
-        //         }
-        //     }
+                }
+            }
 
-        //     for (let prop in element) {
-        //         if(!element.hasOwnProperty(prop)) continue;
-        //         if (typeof element[prop] === "object") {
-        //             let newParents = parents.slice(0);
-        //             newParents.push(name);
-        //             loopRecursive(element[prop], prop, newParents, map, result);
-        //         }
-        //     }
+            for (let prop in element) {
+                if(!element.hasOwnProperty(prop)) continue;
+                if (typeof element[prop] === "object") {
+                    let newParents = parents.slice(0);
+                    newParents.push(name);
+                    loopRecursive(element[prop], prop, newParents, map, result);
+                }
+            }
 
-        // };
+        };
 
-        // loopRecursive(schema, "schema", []);
+        loopRecursive(schema, "schema", []);
         resolve(result);
 
     });
@@ -603,34 +603,34 @@ export function getUIfromSchema(schema, map) {
 
 export function getJSfromSP(item, fields) {
 
-    // let result = {};
-    // let mapping = getValidSPFields(fields, [1,2,3,4,6,7,8,9,10,11,15,16,20]);
+    let result = {};
+    let mapping = getValidSPFields(fields, [1,2,3,4,6,7,8,9,10,11,15,16,20]);
 
-    // if (mapping) {
-    //     for (let i = 0; i < mapping.length; i++) {
+    if (mapping) {
+        for (let i = 0; i < mapping.length; i++) {
             
-    //         const field = fields[mapping[i].index];
-    //         const value = item[field.InternalName];
+            const field = fields[mapping[i].index];
+            const value = item[field.InternalName];
 
-    //         if (value == null) {
-    //             result[field.InternalName] = null;
-    //         } else {
-    //             //https://msdn.microsoft.com/en-us/library/microsoft.sharepoint.client.fieldtype.aspx
-    //             switch (field.FieldTypeKind) {
-    //                 case 1: //Integer
-    //                     result[field.InternalName] = parseInt(value.toString());
-    //                     break;
-    //                 case 2, 3: //Text
-    //                     result[field.InternalName] = value.toString();
-    //                     break;
-    //             }
-    //         }
+            if (value == null) {
+                result[field.InternalName] = null;
+            } else {
+                //https://msdn.microsoft.com/en-us/library/microsoft.sharepoint.client.fieldtype.aspx
+                switch (field.FieldTypeKind) {
+                    case 1: //Integer
+                        result[field.InternalName] = parseInt(value.toString());
+                        break;
+                    case 2, 3: //Text
+                        result[field.InternalName] = value.toString();
+                        break;
+                }
+            }
             
 
-    //     }
-    // }
+        }
+    }
 
-    // return result;
+    return result;
 
 }
 
@@ -640,16 +640,16 @@ export function getSPfromJS() {
 
 function getValidSPFields(fields, kinds) {
 
-    // let mapping = [];
+    let mapping = [];
 
-    // for (let i = 0; i < fields.length; i++) {
-    //     if (!fields[i].Hidden && !fields[i].ReadOnlyField) {
-    //         if (kinds.indexOf(fields[i].FieldTypeKind) >= 0) {
-    //             mapping.push({ index: i, field: fields[i].InternalName });
-    //         }
-    //     }
-    // }
+    for (let i = 0; i < fields.length; i++) {
+        if (!fields[i].Hidden && !fields[i].ReadOnlyField) {
+            if (kinds.indexOf(fields[i].FieldTypeKind) >= 0) {
+                mapping.push({ index: i, field: fields[i].InternalName });
+            }
+        }
+    }
 
-    // return mapping;
+    return mapping;
 
 }
