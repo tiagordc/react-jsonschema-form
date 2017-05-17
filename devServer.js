@@ -7,10 +7,12 @@ const opn = require('opn');
 const webpackConfig = require("./webpack.config.dev");
 const compiler = webpack(webpackConfig);
 
+const scriptPath = "build/bundle.js";
+if (fs.existsSync(scriptPath)) fs.unlinkSync(scriptPath);
+
 compiler.run(function(err, stats) {
 
   const options = require("./auth");
-  const scriptPath = path.join(stats.compilation.outputOptions.path, stats.compilation.outputOptions.filename);
 
   let file = options.file;
   file.fileContent = fs.readFileSync(scriptPath);
