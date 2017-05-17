@@ -29,13 +29,42 @@ module.exports = {
 }
 ```
 
-## instructions
+## deploy
 
 npm start
 
+## usage
+
 ```javascript
-var schema = { "type": "object", "required": [ "Title" ], "properties": { "Title": { "type": "string", "title": "Title" } } };
-var itemId = null;
-window.ReactForm.load("divForm", schema, "List Name", itemId);
-window.ReactForm.destroy();
+
+var myDiv = document.getElementById("myDiv");
+var mySchema = { 
+    "type": "object", 
+    "required": [ "Title" ], 
+    "properties": { "Title": { "type": "string", "title": "Title" } } 
+};
+var myList = "My List Name";
+var myItem = null;
+
+//window.ReactForm.load(myDiv, myList, myItem);
+window.ReactForm.loadWithSchema(myDiv, mySchema, myList, myItem);
+
+myDiv.addEventListener('loading', function (event) {
+  //event.preventDefault();
+  console.log('loading',event.detail);
+});
+
+myDiv.addEventListener('loaded', function (event) {
+  console.log('loaded', event.detail);
+});
+
+myDiv.addEventListener('saving', function (event) {
+  //event.preventDefault();
+  console.log('saving', event.detail);
+});
+
+myDiv.addEventListener('saved', function (event) {
+  console.log('saved', event.detail);
+});
+
 ```

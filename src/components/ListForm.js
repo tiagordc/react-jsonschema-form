@@ -10,20 +10,20 @@ import "babel-polyfill";
 
 export default class ListForm {
 
-  load(domId, schema, list, item) {
+  loadWithSchema(element, schema, listName, itemId) {
     
     let that = this;
 
-    that.elem = document.getElementById(domId);
-    that.listName = list;
-    that.itemId = item;
-    
+    that.listName = listName;
+    that.itemId = itemId;
+    that.elem = element;
+
     let promises = [getUIfromSchema(schema, { "people": PeoplePickerWidget })];
     
-    if (typeof list === "string") {
-        promises.push(PnP.sp.web.lists.getByTitle(list).fields.get());
-        if (typeof item === "number") {
-            promises.push(PnP.sp.web.lists.getByTitle(list).items.getById(item).get());
+    if (typeof listName === "string") {
+        promises.push(PnP.sp.web.lists.getByTitle(listName).fields.get());
+        if (typeof itemId === "number") {
+            promises.push(PnP.sp.web.lists.getByTitle(listName).items.getById(itemId).get());
         }
     }
 
@@ -41,15 +41,32 @@ export default class ListForm {
             that.listFields = data[1];
 
             if (data.length > 2) {
+
                 that.listItem = data[2];
-                formProps.formData = getJSfromSP(that.listItem, that.listFields);
+                let item = getJSfromSP(that.listItem, that.listFields);
+                let eventDetails = { item: item, source: that.listItem, fields: that.listFields };
+                let proceed = that.elem.dispatchEvent(new CustomEvent('loading', { 'detail': eventDetails }));
+
+                if (proceed) {
+                    formProps.formData = item;
+                    that.elem.dispatchEvent(new CustomEvent('loaded', { 'detail': eventDetails }));
+                }
+
             }
 
             formProps.onSubmit = (data) => {
-                const item = getSPfromJS(data.formData, that.listFields);
-                const items = PnP.sp.web.lists.getByTitle(that.listName).items;
-                if (that.listItem) items.getById(that.itemId).update(item).then(i => { console.log(i); });             
-                else items.add(item).then(i => { console.log(i); });
+
+                let item = getSPfromJS(data.formData, that.listFields);
+                let eventDetails = { item: item, source: data.formData, errors: data.errors };
+                let proceed = that.elem.dispatchEvent(new CustomEvent('saving', { 'detail': eventDetails }));
+
+                if (proceed) {
+                    const items = PnP.sp.web.lists.getByTitle(that.listName).items;
+                    if (that.listItem) items.getById(that.itemId).update(item);             
+                    else items.add(item);
+                    that.elem.dispatchEvent(new CustomEvent('saved', { 'detail': eventDetails }));
+                }
+                
             };
 
         }
