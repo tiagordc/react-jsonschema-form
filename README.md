@@ -4,7 +4,7 @@ A React component to bring JSON Schema Web Forms to SharePoint
 
 [![Build Status](https://travis-ci.org/tiagordc/sp-react-form.svg?branch=master)](https://travis-ci.org/tiagordc/sp-react-form)
 
-## auth.js
+## create your auth.js
 
 ```javascript
 module.exports = {
@@ -24,14 +24,16 @@ module.exports = {
     },
     debug: {
         url: '[DEBUG URL]',
-        browser: 'chrome'
+        browser: ['chrome', '--auto-open-devtools-for-tabs']
     }
 }
 ```
 
 ## deploy
 
-npm start
+debug: npm start
+
+dist: 
 
 ## usage
 
@@ -49,22 +51,22 @@ var myItem = null;
 //window.ReactForm.load(myDiv, myList, myItem);
 window.ReactForm.loadWithSchema(myDiv, mySchema, myList, myItem);
 
-myDiv.addEventListener('loading', function (event) {
-  //event.preventDefault();
-  console.log('loading',event.detail);
+myDiv.addEventListener('loading', function (ev) {
+  //ev.preventDefault();
+  console.log('loading', ev.detail);
 });
 
-myDiv.addEventListener('loaded', function (event) {
-  console.log('loaded', event.detail);
+myDiv.addEventListener('loaded', function (ev) {
+  console.log('loaded', ev.detail);
 });
 
-myDiv.addEventListener('saving', function (event) {
-  //event.preventDefault();
-  console.log('saving', event.detail);
+myDiv.addEventListener('saving', function (ev) {
+  //ev.preventDefault();
+  console.log('saving', ev.detail);
 });
 
-myDiv.addEventListener('saved', function (event) {
-  console.log('saved', event.detail);
+myDiv.addEventListener('saved', function (ev) {
+  console.log('saved', ev.detail);
 });
 
 ```

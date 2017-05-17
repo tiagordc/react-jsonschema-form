@@ -602,6 +602,19 @@ export function getUIfromSchema(schema, map) {
 
 }
 
+export function getSchemaFromList(fields) {
+  
+  return new Promise(function(resolve, reject) {  
+
+    let result = {};
+
+    
+    resolve(result);
+
+  });
+
+}
+
 export function getJSfromSP(item, fields) {
 
     let result = {};
