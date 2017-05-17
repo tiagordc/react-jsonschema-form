@@ -1,37 +1,26 @@
+
 const path = require("path");
-const express = require("express");
 const webpack = require("webpack");
-
-const server = process.env.RJSF_DEV_SERVER || "localhost:8080";
-const splitServer = server.split(":");
-const host = splitServer[0];
-const port = splitServer[1];
-const env = "dev";
-
-const webpackConfig = require("./webpack.config." + env);
+const fs = require('fs');
+const spsave = require("spsave").spsave;
+const opn = require('opn');
+const webpackConfig = require("./webpack.config.dev");
 const compiler = webpack(webpackConfig);
-const app = express();
 
-app.use(require("webpack-dev-middleware")(compiler, {
-  publicPath: webpackConfig.output.publicPath,
-  noInfo: true
-}));
+compiler.run(function(err, stats) {
 
-app.use(require("webpack-hot-middleware")(compiler));
+  const options = require("./auth");
+  const scriptPath = path.join(stats.compilation.outputOptions.path, stats.compilation.outputOptions.filename);
 
-app.get("/favicon.ico", function(req, res) {
-  res.status(204).end();
-});
+  let file = options.file;
+  file.fileContent = fs.readFileSync(scriptPath);
 
-app.get("/", function(req, res) {
-  res.sendFile(path.join(__dirname, "playground", "index.html"));
-});
+  spsave(options.options, options.credentials, file)
+    .then(function(){
+        opn(options.debug.url, { app: options.debug.browser });
+    })
+    .catch(function(err){
+        console.log(err);
+    });
 
-app.listen(port, host, function(err) {
-  if (err) {
-    console.log(err);
-    return;
-  }
-
-  console.log(`Listening at http://${server}`);
 });
