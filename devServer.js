@@ -6,23 +6,22 @@ const spsave = require("spsave").spsave;
 const opn = require('opn');
 const webpackConfig = require("./webpack.config.dev");
 const compiler = webpack(webpackConfig);
+const rimraf = require("rimraf");
 
-const scriptPath = "build/bundle.js";
-if (fs.existsSync(scriptPath)) fs.unlinkSync(scriptPath);
+rimraf("build", function () { });
 
 compiler.run(function(err, stats) {
 
-  const options = require("./auth");
-
+  let options = require("./auth");
+  let scriptPath = path.join(stats.compilation.outputOptions.path, stats.compilation.outputOptions.filename);
   let file = options.file;
   file.fileContent = fs.readFileSync(scriptPath);
 
   spsave(options.options, options.credentials, file)
-    .then(function(){
+    .then(function() {
         opn(options.debug.url, { app: options.debug.browser });
-    })
-    .catch(function(err){
-        console.log(err);
+        rimraf("build", function () { });
+        rimraf("lib", function () { });
     });
 
 });
