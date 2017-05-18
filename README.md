@@ -40,10 +40,13 @@ dist:
 ```javascript
 
 var myDiv = document.getElementById("myDiv");
-var mySchema = { 
-    "type": "object", 
-    "required": [ "Title" ], 
-    "properties": { "Title": { "type": "string", "title": "Title" } } 
+var mySchema = {
+    "type": "object",
+    "required": [ "Title" ],
+    "properties": {
+        "Title": { "type": "string", "title": "Title" },
+        "Description": { "type": "textarea", "title": "Description", uiOptions: { rows: 10 } }
+    }
 };
 var myList = "My List Name";
 var myItem = null;

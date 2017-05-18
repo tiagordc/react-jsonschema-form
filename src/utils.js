@@ -479,10 +479,7 @@ export function parseDateString(dateString, includeTime = true) {
   };
 }
 
-export function toDateString(
-  { year, month, day, hour = 0, minute = 0, second = 0 },
-  time = true
-) {
+export function toDateString({ year, month, day, hour = 0, minute = 0, second = 0 }, time = true ) {
   const utcTime = Date.UTC(year, month - 1, day, hour, minute, second);
   const datetime = new Date(utcTime).toJSON();
   return time ? datetime : datetime.slice(0, 10);
@@ -596,9 +593,9 @@ export function getUIfromSchema(schema) {
                   currentNode[name] = { "ui:widget": widget};
                   element.type = dataType;
 
-                  if (typeof element.ui !== "undefined") {
-                    currentNode[name]["ui:options"] = element.ui;
-                    delete element.ui;
+                  if (typeof element.uiOptions !== "undefined") {
+                    currentNode[name]["ui:options"] = element.uiOptions;
+                    delete element.uiOptions;
                   }
 
                 }
