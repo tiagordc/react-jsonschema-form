@@ -4,7 +4,6 @@ import { getUIfromSchema, getSchemaFromList, getJSfromSP, getSPfromJS } from '..
 
 import Form from "./Form";
 import PnP from "sp-pnp-js";
-import PeoplePickerWidget from './widgets/PeopleWidget'
 
 import "babel-polyfill";
 
@@ -24,7 +23,7 @@ export default class ListForm {
 
         getSchemaFromList(fields).then(function (schema) {
 
-            let promises = [getUIfromSchema(schema, { "people": PeoplePickerWidget })];
+            let promises = [getUIfromSchema(schema)];
 
             if (typeof itemId === "number" && itemId > 0) {
                 promises.push(PnP.sp.web.lists.getByTitle(listName).items.getById(itemId).get());
@@ -86,7 +85,7 @@ export default class ListForm {
     that.itemId = itemId;
     that.elem = element;
 
-    let promises = [getUIfromSchema(schema, { "people": PeoplePickerWidget })];
+    let promises = [getUIfromSchema(schema)];
     
     if (typeof listName === "string") {
         promises.push(PnP.sp.web.lists.getByTitle(listName).fields.get());

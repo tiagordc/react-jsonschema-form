@@ -166,17 +166,7 @@ export default class Form extends Component {
     const _SchemaField = registry.fields.SchemaField;
 
     return (
-      <fieldset
-        className={className ? className : "rjsf"}
-        id={id}
-        name={name}
-        method={method}
-        target={target}
-        action={action}
-        autoComplete={autocomplete}
-        encType={enctype}
-        acceptCharset={acceptcharset}
-        noValidate={noHtml5Validate}>
+      <fieldset className={className ? className : "rjsf"} id={id} name={name}>
         {this.renderErrors()}
         <_SchemaField
           schema={schema}
@@ -192,7 +182,7 @@ export default class Form extends Component {
         {children
           ? children
           : <p>
-              <button className="btn btn-info" onClick={this.onSubmit}>Save</button>
+              <button className="btn btn-primary pull-right" onClick={this.onSubmit}>Save</button>
             </p>}
       </fieldset>
     );

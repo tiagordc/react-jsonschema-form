@@ -554,34 +554,57 @@ export function rangeSpec(schema) {
 }
 
 //Get UISchema from invalid JSONSchema
-export function getUIfromSchema(schema, map) {
+export function getUIfromSchema(schema) {
     
     return new Promise(function(resolve, reject) {  
 
         let result = {};
+        let widgets = require("./components/widgets").default;
         
         const loopRecursive = function (element, name, parents) {
 
             if (!element) reject();
 
-            for (let prop in map) {
-                if (typeof element.type === "string" && element.type === prop) {
+            if (typeof element.type === "string" && element.type !== "object") {
 
-                    let currentNode = result;
-                    for (let i = 1; i < parents.length; i++) {
-                        if (parents[i] === "properties") continue;
-                        if (typeof currentNode[parents[i]] !== "object") currentNode[parents[i]] = {};
-                        currentNode = currentNode[parents[i]];
-                    }
-                    currentNode[name] = {"ui:widget": map[prop] };
-                    element.type = "string";
+              for (let dataType in widgetMap) {
 
-                    if (typeof element.ui !== "undefined") {
-                        currentNode[name]["ui:options"] = element.ui;
-                        delete element.ui;
+                let typeMap = widgetMap[dataType];
+                let widget = null;
+
+                if (element.type === dataType) {
+                  let defaultUi = Object.keys(typeMap)[0];
+                  let widgetName = typeMap[defaultUi];
+                  widget = widgets[widgetName];
+                } else {
+                  for (let typeName in typeMap) {
+                    if (element.type === typeName) {
+                      widget = widgets[typeMap[element.type]];
+                      break;
                     }
+                  }
+                }
+                
+                if (widget) {
+
+                  let currentNode = result;
+                  for (let i = 1; i < parents.length; i++) {
+                    if (parents[i] === "properties") continue;
+                    if (typeof currentNode[parents[i]] !== "object") currentNode[parents[i]] = {};
+                    currentNode = currentNode[parents[i]];
+                  }
+                  currentNode[name] = { "ui:widget": widget};
+                  element.type = dataType;
+
+                  if (typeof element.ui !== "undefined") {
+                    currentNode[name]["ui:options"] = element.ui;
+                    delete element.ui;
+                  }
 
                 }
+
+              }
+
             }
 
             for (let prop in element) {
@@ -589,7 +612,7 @@ export function getUIfromSchema(schema, map) {
                 if (typeof element[prop] === "object") {
                     let newParents = parents.slice(0);
                     newParents.push(name);
-                    loopRecursive(element[prop], prop, newParents, map, result);
+                    loopRecursive(element[prop], prop, newParents, result);
                 }
             }
 
